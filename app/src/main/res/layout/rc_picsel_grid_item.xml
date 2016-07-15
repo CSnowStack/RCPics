@@ -18,13 +18,14 @@
         android:background="@drawable/rc_sp_grid_mask">
 
         <view
+            android:padding="8dp"
             android:id="@+id/checkbox"
             class="com.csnowstck.rongcloudimagepick.RCSelectImageActivity$SelectBox"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
             android:focusable="false"
-            android:scaleType="centerInside"/>
+            />
 
     </RelativeLayout>
 </com.csnowstck.rongcloudimagepick.SquareLayout>

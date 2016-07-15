@@ -7,7 +7,6 @@
 
 
     <color name="rc_picsel_toolbar">#3F51B5</color>
-    <color name="rc_picsel_toolbar_transparent">#903F51B5</color>
     <color name="rc_picsel_toolbar_send_normal">#45C018</color>
     <color name="rc_picsel_toolbar_send_pressed">#3E7D2C</color>
     <color name="rc_picsel_toolbar_send_disable">#3E7D2C</color>
@@ -17,6 +16,5 @@
     <color name="rc_picsel_grid_mask_pressed">#80000000</color>
     <color name="rc_picsel_catalog_shadow">#C0000000</color>
 
-    <color name="rc_picprev_toolbar_transparent">@color/rc_picsel_toolbar_transparent</color>
 
 </resources>

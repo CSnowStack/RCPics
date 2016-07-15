@@ -163,7 +163,7 @@ public class RCSelectImageActivity extends Activity {
                     while (i$1.hasNext()) {
                         PicItem pic = (PicItem) i$1.next();
                         if (pic.selected) {
-                            list.add(Uri.parse("file://" + pic.uri));
+                            list.add("file://" + pic.uri);
                         }
 
                     }
@@ -617,7 +617,7 @@ public class RCSelectImageActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED) {
             if (resultCode == RESULT_FIRST_USER) {
-                this.setResult(-1, data);
+                this.setResult(RESULT_OK, data);
                 this.finish();
             } else {
                 ArrayList list;

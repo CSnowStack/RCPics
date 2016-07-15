@@ -1,9 +1,10 @@
 package com.csnowstck.rongcloudimagepick;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -16,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +37,8 @@ public class RCPreviewImageActivity extends Activity {
     private View mWholeView;
     private View mToolbarTop;
     private View mToolbarBottom;
-    private ImageButton mBtnBack;
+    private View mToolbar;
+    private ImageView mBtnBack;
     private TextView mTvSend;
     private CheckButton mSelectBox;
     private HackyViewPager mViewPager;
@@ -45,7 +46,7 @@ public class RCPreviewImageActivity extends Activity {
     private int mCurrentIndex;
     private boolean mFullScreen;
     private int maxSelected;
-
+    private AnimatorSet mShowAnimatorSet,mHideAnimatorSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +58,9 @@ public class RCPreviewImageActivity extends Activity {
 
     public void initView() {
         mToolbarTop = this.findViewById(R.id.toolbar_top);
+        mToolbar = this.findViewById(R.id.toolbar);
         mIndexTotal = (TextView) this.findViewById(R.id.index_total);
-        mBtnBack = (ImageButton) this.findViewById(R.id.back);
+        mBtnBack = (ImageView) this.findViewById(R.id.back);
         mTvSend = (TextView) this.findViewById(R.id.send);
         mWholeView = this.findViewById(R.id.whole_layout);
         mViewPager = (HackyViewPager) this.findViewById(R.id.viewpager);
@@ -91,6 +93,7 @@ public class RCPreviewImageActivity extends Activity {
         mViewPager.setCurrentItem(this.mCurrentIndex);
 
         updateToolbar();
+
     }
 
 
@@ -113,13 +116,13 @@ public class RCPreviewImageActivity extends Activity {
                 while (i$.hasNext()) {
                     PicItem item = (PicItem) i$.next();
                     if (item.selected) {
-                        list.add(Uri.parse("file://" + item.uri));
+                        list.add("file://" + item.uri);
                     }
                 }
 
                 if (list.size() == 0) {
                     mSelectBox.setChecked(true);
-                    list.add(Uri.parse("file://" + ((PicItem) mItemList.get(mCurrentIndex)).uri));
+                    list.add("file://" +  mItemList.get(mCurrentIndex));
                 }
 
                 data.putExtra("android.intent.extra.RETURN_RESULT", list);
@@ -148,7 +151,7 @@ public class RCPreviewImageActivity extends Activity {
             public void onPageSelected(int position) {
                 mCurrentIndex = position;
                 mIndexTotal.setText(String.format("%d/%d", new Object[]{Integer.valueOf(position + 1), Integer.valueOf(mItemList.size())}));
-                mSelectBox.setChecked(((PicItem) mItemList.get(position)).selected);
+                mSelectBox.setChecked( mItemList.get(position).selected);
             }
 
             public void onPageScrollStateChanged(int state) {
@@ -210,19 +213,30 @@ public class RCPreviewImageActivity extends Activity {
                             decorView.setSystemUiVisibility(uiOptions);
                         }
 
-                        mToolbarTop.setVisibility(View.INVISIBLE);
-                        mToolbarBottom.setVisibility(View.INVISIBLE);
+                        if(mHideAnimatorSet==null){
+                            mHideAnimatorSet=new AnimatorSet();
+                            int statusHeight= ScreenUtil.getStatusBarHeight(RCPreviewImageActivity.this);
+                            mHideAnimatorSet.playTogether(ObjectAnimator.ofFloat(mToolbar,"translationY",-mToolbar.getHeight()- statusHeight), ObjectAnimator.ofFloat(mToolbarBottom,"translationY",mToolbarBottom.getHeight()));
+                            mHideAnimatorSet.setDuration(400);
+                        }
+                        mHideAnimatorSet.start();
                     } else {
                         if(Build.VERSION.SDK_INT < 16) {
                             getWindow().setFlags(WindowManager.LayoutParams.SCREEN_ORIENTATION_CHANGED, WindowManager.LayoutParams.SCREEN_ORIENTATION_CHANGED);
                         } else {
                             decorView = getWindow().getDecorView();
-                            uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                            uiOptions = View.OVER_SCROLL_ALWAYS;
                             decorView.setSystemUiVisibility(uiOptions);
                         }
 
-                        mToolbarTop.setVisibility(View.VISIBLE);
-                        mToolbarBottom.setVisibility(View.VISIBLE);
+                        if(mShowAnimatorSet==null){
+                            mShowAnimatorSet=new AnimatorSet();
+                            mShowAnimatorSet.playTogether(ObjectAnimator.ofFloat(mToolbar,"translationY",0), ObjectAnimator.ofFloat(mToolbarBottom,"translationY",0));
+                            mShowAnimatorSet.setDuration(400);
+                        }
+
+                        mShowAnimatorSet.start();
+
                     }
 
                 }
