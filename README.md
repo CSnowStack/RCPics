@@ -20,7 +20,7 @@ dependencies {
 }
 ```
 ## 效果
-![预览图](https://github.com/CSnowStack/RCPics/pics/预览.gif)
+![预览图](https://github.com/CSnowStack/RCPics/pics/preview.gif)
 
 
 
